@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lhb.blog.com.mapper.NotificationMapper">
+
+
+    <sql id="notificationSql">
+        id as nid,notifier,recevier,outerId,type,status,create_time,notifier_name,recevier_content
+    </sql>
+
+    <resultMap id="notificationDTO" type="lhb.blog.com.dto.NotificationDTO">
+        <id property="id" column="nid"></id>
+        <result property="notifier" column="notifier"></result>
+        <result property="recevier" column="recevier"/>
+        <result property="outerId" column="outerId"/>
+        <result property="type" column="type"/>
+        <result property="status" column="status"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="notifierName" column="notifier_name"></result>
+        <result property="recevierContent" column="recevier_content"></result>
+        <collection property="user" ofType="lhb.blog.com.entity.User">
+            <id property="id" column="id"></id>
+            <result property="username" column="username"></result>
+            <result property="password" column="password"></result>
+            <result property="avatars" column="avatars"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="notificationDTO">
+        select <include refid="notificationSql" /> from notification where recevier = #{id} order by create_time desc limit #{page},#{size}
+    </select>
+</mapper>

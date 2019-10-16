@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lhb.blog.com.mapper.CommentMapper">
+
+    <sql id="sql1">
+        u.id as uid,u.username,u.password,u.avatars,c.*
+    </sql>
+
+    <resultMap id="resultCommentDTO" type="lhb.blog.com.dto.CommentDTO">
+        <id property="cid" column="cid" />
+        <result property="parentId" column="parent_id" />
+        <result property="type" column="type"/>
+        <result property="commentator" column="commentator"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="likeCount" column="like_count" />
+        <result property="content" column="content"/>
+        <collection property="user" ofType="lhb.blog.com.entity.User">
+            <id  property="id" column="uid" />
+            <result property="username" column="username" />
+            <result property="password" column="password"/>
+            <result property="avatars" column="avatars"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="selectCommentByParentId" resultType="java.lang.Integer" resultMap="resultCommentDTO">
+            select <include refid="sql1" />
+            from user u , comment c
+            where c.parent_id = #{parentId} and c.type = #{type} and u.id = c.commentator order by create_time desc
+    </select>
+
+    <select id="selectOneCommentById" resultType="java.lang.Integer" resultMap="resultCommentDTO">
+        select * from comment where comment.cid =#{id}
+    </select>
+	
+</mapper>

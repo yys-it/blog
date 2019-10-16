@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lhb.blog.com.mapper.QuestionMapper">
+
+	<sql id="questionSql">
+        question.id,question.title,question.description,question.tag,question.creator,question.view_count,question.like_count,question.comment_count,question.gmt_create,question.gmt_modified,question.creator_time
+	</sql>
+
+	<sql id="userSql">
+		user.id,user.username,user.password,user.avatars
+	</sql>
+
+	<resultMap id="QuestionDto" type="lhb.blog.com.dto.QuestionDTO">
+		<id property="id" column="id"></id>
+		<result property="title" column="title"></result>
+		<result property="description" column="description"></result>
+		<result property="tag" column="tag"></result>
+		<result property="gmtCreate" column="gmt_create"></result>
+		<result property="gmtModified" column="gmt_modified"></result>
+		<result property="creator" column="creator"></result>
+		<result property="viewCount" column="view_count"></result>
+		<result property="likeCount" column="like_count"></result>
+		<result property="commentCount" column="comment_count"></result>
+		<result property="createTime" column="creator_time"></result>
+		<collection property="user" ofType="lhb.blog.com.entity.User">
+			<id property="id" column="id"></id>
+			<result property="username" column="username"></result>
+			<result property="password" column="password"></result>
+			<result property="avatars" column="avatars"></result>
+		</collection>
+	</resultMap>
+
+	<resultMap id="questionResult" type="lhb.blog.com.entity.Question">
+		<id property="id" column="id"></id>
+		<result property="title" column="title"></result>
+		<result property="description" column="description"></result>
+		<result property="tag" column="tag"></result>
+		<result property="gmtCreate" column="gmt_create"></result>
+		<result property="gmtModified" column="gmt_modified"></result>
+		<result property="creator" column="creator"></result>
+		<result property="viewCount" column="view_count"></result>
+		<result property="likeCount" column="like_count"></result>
+		<result property="commentCount" column="comment_count"></result>
+		<result property="createTime" column="creator_time"></result>
+	</resultMap>
+
+	<select id="list" resultMap="QuestionDto">
+		select question.*,user.* from question,user WHERE question.creator = user.id  order by creator_time desc limit #{page},#{size}
+	</select>
+
+	<select id="selectLikeBySearch" resultMap="QuestionDto">
+		select question.*,user.* from question,user WHERE question.creator = user.id and title regexp #{search} order by creator_time desc limit #{page},#{size}
+	</select>
+
+	<select id="countLikeBySearch" parameterType="String" resultType="java.lang.Integer">
+		select count(1) from question WHERE  title regexp #{search}
+	</select>
+
+	<select id="selectMyQuestion" parameterType="java.lang.Integer" resultMap="QuestionDto">
+		SELECT question.*,user.* FROM question,USER WHERE question.creator = user.id and question.creator=#{id} order by creator_time desc limit #{page},#{size}
+	</select>
+
+	<select id="count" resultType="java.lang.Integer">
+		select count(1) from question
+	</select>
+
+	<select id="myQuestionCount" resultType="java.lang.Integer">
+		select count(1) from question,user where question.creator = user.id and  question.creator=#{id}
+	</select>
+
+	<select id="selectById" parameterType="java.lang.Integer" resultMap="QuestionDto">
+		select <include refid="questionSql" />,<include refid="userSql" /> from question,user where question.id =#{id} and question.creator=user.id
+	</select>
+
+	<select id="selectInQuestion" parameterType="lhb.blog.com.entity.Question" resultMap="questionResult">
+		select <include refid="questionSql"></include> from question where id != #{id} and tag regexp #{tag} limit 1,10
+	</select>
+
+</mapper>

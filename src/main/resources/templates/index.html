@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="referrer" content="never">
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/bootstrap-theme.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/blog.css">
+    <script src="/js/jquery-3.4.1.js" type="application/javascript"></script>
+    <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+</head>
+<script type="application/javascript">
+    window.onload = function () {
+        var closable = window.localStorage.getItem("closable");
+        if (closable == "true") {
+            window.close();
+            window.localStorage.removeItem("closable");
+        }
+    }
+</script>
+<body>
+<div th:insert="~{navigation :: nav}"></div>
+<div class="container-fluid main">
+    <div class="row">
+        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+
+            <h2><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>发现</h2>
+            <hr>
+            <span th:if="${pageQuestionDTO == null}"><h3 style="color: #999;">抱歉，暂时没有关于此关键字的相关问题</h3></span>
+            <div th:if="${pageQuestionDTO != null}">
+                <div class="media" th:each="p:${pageQuestionDTO.data}">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="img-circle media-object" th:src="${p.user.avatars}">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            <a th:href="@{'/question/'+${p.id}}" th:text="${p.title}" style="text-decoration:none"></a>
+                            <!--<span th:href="@{'/question/'+${p.id}}" th:text="${p.title}"></span>-->
+                        </h4>
+                        <span class="text-desc">
+                        <span th:text="${p.commentCount}" /> 个回复 •
+                        <span th:text="${p.viewCount}" /> 次浏览 •
+                        <span th:text="${#dates.format(p.createTime,'yyyy-MM-dd HH:mm')}"></span>
+                    </span>
+                    </div>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li th:if="${pageQuestionDTO.showFirstPage}">
+                            <a  th:href="@{/(page=${1},search=${search})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;&lt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pageQuestionDTO.showPrevious}">
+                            <a  th:href="@{/(page=${pageQuestionDTO.page-1},search=${search})}" aria-label="Previous">
+                                <span aria-hidden="true">&lt;</span>
+                            </a>
+                        </li>
+                        <li th:each="p:${pageQuestionDTO.pages}" th:class="${p == pageQuestionDTO.page} ? 'active' : '' ">
+                            <a  th:href="@{/(page=${p},search=${search})}" th:text="${p}"></a>
+                        </li>
+                        <li th:if="${pageQuestionDTO.showNext}">
+                            <a th:href="@{/(page=${pageQuestionDTO.page+1},search=${search})}" aria-label="Previous">
+                                <span aria-hidden="true">&gt;</span>
+                            </a>
+                        </li>
+                        <li th:if="${pageQuestionDTO.showNext}">
+                            <a href="/" th:href="@{/(page=${pageQuestionDTO.totalPage},search=${search})}" aria-label="Previous">
+                                <span aria-hidden="true">&gt;&gt;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <iframe width="400" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="//i.tianqi.com/index.php?c=code&id=12&bgc=%23&bdc=%23&icon=1&num=5&site=12"></iframe>            </div>
+            <!--个人图片-->
+            <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <img src="/images/2.jpg" class="img-thumbnail question-wechat">
+            </div>
+        </div>
+    </div>
+</div>
+<div th:insert="~{footer :: foot}"></div>
+</body>
+</html>
+</html>
